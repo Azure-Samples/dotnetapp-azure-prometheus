@@ -1,14 +1,17 @@
-# Project Name
+---
+page_type: sample
+languages:
+- csharp
+products:
+- azure
+- dotnet-core
+name: Pre-aggregated Metrics - .NET Core app with Prometheus and Azure Monitor
+description: "Sample .NET Core Web app that demonstrates different implementations for pre-aggregated metrics"
+urlFragment: "dotnet-azure-prometheus"
+---
+# Pre-aggregated Metrics - .NET Core app with Prometheus and Azure Monitor
 
-(short, 1-3 sentenced, description of the project)
-
-## Features
-
-This project framework provides the following features:
-
-* Feature 1
-* Feature 2
-* ...
+Sample .NET Core Web app that demonstrates different implementations for pre-aggregated metrics
 
 ## Getting Started
 
