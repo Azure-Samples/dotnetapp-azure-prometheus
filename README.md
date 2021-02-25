@@ -15,14 +15,14 @@ urlFragment: "dotnet-azure-prometheus"
   - [Overview](#overview)
   - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
-    - [Quickstart](#quickstart)
-    - [Deploy Application to Azure Kubernetes Service](#deploy-application-to-azure-kubernetes-service)
+    - [Quickstart - Run App Locally](#quickstart---run-app-locally)
+    - [Deploy Application to Azure Kubernetes Service to Collect Metrics](#deploy-application-to-azure-kubernetes-service-to-collect-metrics)
     - [Install the Prometheus Server](#install-the-prometheus-server)
   - [Prometheus scraping with Azure Monitor](#prometheus-scraping-with-azure-monitor)
   - [Pod Annotations for Scraping](#pod-annotations-for-scraping)
+  - [Run the Application and Collect Metrics](#run-the-application-and-collect-metrics)
   - [Optionally Install Grafana](#optionally-install-grafana)
     - [Setup Configuration on Grafana](#setup-configuration-on-grafana)
-  - [Run the Application and Collect Metrics](#run-the-application-and-collect-metrics)
   - [Resources](#resources)
 
 ## Overview
@@ -43,13 +43,15 @@ Sample .NET Core Web app that demonstrates different implementations for pre-agg
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [Helm](https://helm.sh/docs/intro/install/)
 
-### Quickstart
+### Quickstart - Run App Locally
+
+Verify that the sample application is able to run locally. In order to collect metrics, please continue to the [next section](#deploy-application-to-azure-kubernetes-service-to-collect-metrics) to deploy the app to AKS.
 
 1. git clone [this repo](https://github.com/Azure-Samples/dotnetapp-azure-prometheus/)
 2. cd `dotnetapp-azure-prometheus/Application`
 3. Run `docker-compose up` and go to <http://localhost:8080> to interact with the application.
 
-### Deploy Application to Azure Kubernetes Service
+### Deploy Application to Azure Kubernetes Service to Collect Metrics
 
 1. Open the `devops-starter-workflow.yml` and change the environment variables accordingly.
 2. Create the resource group in the Azure portal which was defined as part of the environment variables in the `devops-starter-workflow.yml`.
@@ -69,11 +71,17 @@ Sample .NET Core Web app that demonstrates different implementations for pre-agg
 ### Install the Prometheus Server
 
 ```bash
+
+# Define variables
+RESOURCE_GROUP="<insert-resource-group-name-here>"
+CLUSTER_NAME="<insert-cluster-name-here>"
+NAMESPACE="<insert-application-namespace-name-here>"
+
 # Connect to Cluster
-az aks get-credentials --resource-group myrg --name myaksname
+az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME
 
 # Set the default namespace to the application namespace
-kubectl config set-context --current --namespace=<insert-namespace-name-here>
+kubectl config set-context --current --namespace=$NAMESPACE
 
 helm repo add stable https://charts.helm.sh/stable 
 
@@ -122,6 +130,39 @@ annotations:
   prometheus.io/port: '80'
 ```
 
+## Run the Application and Collect Metrics
+
+1. Get the IP addresses of the sampleapp and the prometheus-server:
+
+    ```bash
+    kubectl get services sampleapp
+    ```
+
+2. Load the sampleapp endpoint and interact with the menu items (Home, About, Contact). Pre-aggregated metrics are configured and collected using:
+
+    - **CustomMetrics**: Implementation of metrics using the AppInsights .NET Core SDK and `TelemetryClient.GetMetric`:
+
+      ![custom-metrics](./assets/custom-metrics.png)
+
+    - **Prometheus metrics**: Implementation of Prometheus metrics using the [prometheus-net](https://github.com/prometheus-net/prometheus-net) .NET library and the `/metrics` endpoint:
+
+      ![prometheus-metrics](./assets/prometheus-metrics.png)
+
+    - **InsightsMetrics**: Agent configuration for scraping Prometheus metrics with Azure Monitor:
+
+      ![insights-metrics](./assets/insights-metrics.png)
+
+    - **Prometheus Server**:
+      - Get the prometheus server IP address:
+
+        ```bash
+        kubectl get services my-prometheus-server
+        ```
+
+      - Load the prometheus server endpoint. The cluster is configured to collect metrics from all pods:
+
+        ![prometheus-server](./assets/prometheus-server.png)
+
 ## Optionally Install Grafana
 
 Grafana can be optionally installed to visualize the web application data and metrics collected once connected with the data source.
@@ -148,32 +189,6 @@ kubectl get services
     ```
 
 3. Follow the [setup guide](https://medium.com/faun/monitoring-with-prometheus-and-grafana-in-kubernetes-42727866562c) to get a starter dashboard for Kubernetes
-
-## Run the Application and Collect Metrics
-
-1. Get the IP addresses of the sampleapp and the prometheus-server:
-
-    ```bash
-    kubectl get services sampleapp my-prometheus-server
-    ```
-
-2. Load the sampleapp endpoint and interact with the menu items (Home, About, Contact). Pre-aggregated metrics are configured and collected using:
-
-    - **CustomMetrics**: Implementation of metrics using the AppInsights .NET Core SDK and `TelemetryClient.GetMetric`:
-
-      ![custom-metrics](./assets/custom-metrics.png)
-
-    - **Prometheus metrics**: Implementation of Prometheus metrics using the [prometheus-net](https://github.com/prometheus-net/prometheus-net) .NET library and the `/metrics` endpoint:
-
-      ![prometheus-metrics](./assets/prometheus-metrics.png)
-
-    - **InsightsMetrics**: Agent configuration for scraping Prometheus metrics with Azure Monitor:
-
-      ![insights-metrics](./assets/insights-metrics.png)
-
-    - **Prometheus Server**: Installation on the cluster configured to collect metrics from all pods:
-
-      ![prometheus-server](./assets/prometheus-server.png)
 
 ## Resources
 

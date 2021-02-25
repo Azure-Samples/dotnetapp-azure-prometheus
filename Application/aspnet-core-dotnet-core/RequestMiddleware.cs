@@ -27,11 +27,11 @@ public class RequestMiddleware
         var path = httpContext.Request.Path.Value;
         var method = httpContext.Request.Method;
 
-        //GetMetric Configuration
+        //GetMetric - Custom Metrics Configuration
         Metric countRequests = _telemetryClient.GetMetric("getmetric_count_requests", "path", "method");
         Metric sumMemory = _telemetryClient.GetMetric("getmetric_sum_memory");
 
-        // Prometheus metrics configuration
+        //Prometheus - Metrics Configuration
         TimeSpan elapsed = new TimeSpan();
 
         var counter = Metrics.CreateCounter("prom_counter_request_total", "requests Total", new CounterConfiguration
@@ -82,8 +82,6 @@ public class RequestMiddleware
             {
                 countRequests.TrackValue(1, path, method);
                 sumMemory.TrackValue(GC.GetAllocatedBytesForCurrentThread());
-                // Demonstrates gauge support limitation
-                //_telemetryClient.GetMetric("GaugeMemory").TrackValue(GC.GetTotalMemory(false));
             }
 
             //Prometheus
