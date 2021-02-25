@@ -39,10 +39,10 @@ Sample .NET Core Web app that demonstrates different implementations for pre-agg
 
 ### Prerequisites
 
-- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
-- [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-- [Helm](https://helm.sh/docs/intro/install/)
-- A [GitHub](https://github.com/) account
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest): Create and manage Azure resources.
+- [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/): Kubernetes command-line tool which allows you to run commands against Kubernetes clusters.
+- [Helm](https://helm.sh/docs/intro/install/): Package manager for Kubernetes
+- [GitHub](https://github.com/) account
 
 ### Quickstart - Run App Locally
 
@@ -54,7 +54,7 @@ Verify that the sample application is able to run locally. In order to collect m
 
 ### Deploy Application to Azure Kubernetes Service to Collect Metrics
 
-1. Create a resource group and service principal
+1. Create a resource group that will hold all the created resources and a service principal to manage and access those resources
 
     ```bash
     # Set your variables
@@ -72,7 +72,7 @@ Verify that the sample application is able to run locally. In order to collect m
 
 2. Use the output of the last command as a secret named `AZURE_CREDENTIALS` in the repository settings. For more details on generating the deployment credentials please see [this guide](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-github-actions#generate-deployment-credentials)
 
-3. Open the [.github\workflows\devops-starter-workflow.yml](.github\workflows\devops-starter-workflow.yml) and change the environment variables accordingly. Use the `RESOURCEGROUPNAME` and `SUBSCRIPTIONID` values that you created above.
+3. [Github Actions](https://docs.github.com/en/actions) will be used to automate the workflow and deploy all the necessary resources to Azure. Open the [.github\workflows\devops-starter-workflow.yml](.github\workflows\devops-starter-workflow.yml) and change the environment variables accordingly. Use the `RESOURCEGROUPNAME` and `SUBSCRIPTIONID` values that you created above.
 
 4. Commit your changes. The commit will trigger the build and deploy jobs within the workflow and will provision all the resources to run the sample application.
 
