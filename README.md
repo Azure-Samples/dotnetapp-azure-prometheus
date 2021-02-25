@@ -54,18 +54,25 @@ Verify that the sample application is able to run locally. In order to collect m
 
 ### Deploy Application to Azure Kubernetes Service to Collect Metrics
 
-1. Open the `devops-starter-workflow.yml` and change the environment variables accordingly.
-2. Create the resource group in the Azure portal which was defined as part of the environment variables in the `.github\workflows\devops-starter-workflow.yml`.
+1. Create a resource group and service principal
 
     ```bash
-    az group create --name {MyResourceGroup} --location {MyLocation}
+    # Set your variables
+    RESOURCEGROUPNAME="MyResourceGroup"
+    LOCATION="MyLocation"
+    SUBSCRIPTIONID="MySubscriptionId"
+    SERVICEPRINCIPAL="MySPName"
+
+    # Create resource group
+    az group create --name $RESOURCEGROUPNAME --location $LOCATION
+
+    # Create a service principal with Contributor role to the resource group
+    az ad sp create-for-rbac --name $SERVICEPRINCIPAL --role contributor --scopes /subscriptions/$SUBSCRIPTIONID/resourceGroups/$RESOURCEGROUPNAME --sdk-auth
     ```
 
-3. Set up Azure login credentials by creating a service principal and adding the output of the command as a secret named `AZURE_CREDENTIALS` in the repository settings. For more details on generating the deployment credentials please see [this guide](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-github-actions#generate-deployment-credentials)
+2. Use the output of the last command as a secret named `AZURE_CREDENTIALS` in the repository settings. For more details on generating the deployment credentials please see [this guide](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-github-actions#generate-deployment-credentials)
 
-    ```bash
-    az ad sp create-for-rbac --name {mySPName} --role contributor --scopes /subscriptions/{subscription-id}/resourceGroups/{MyResourceGroup} --sdk-auth
-    ```
+3. Open the [.github\workflows\devops-starter-workflow.yml](.github\workflows\devops-starter-workflow.yml) and change the environment variables accordingly. Use the `RESOURCEGROUPNAME` and `SUBSCRIPTIONID` values that you created above.
 
 4. Commit your changes. The commit will trigger the build and deploy jobs within the workflow and will provision all the resources to run the sample application.
 
