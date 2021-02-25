@@ -42,22 +42,23 @@ Sample .NET Core Web app that demonstrates different implementations for pre-agg
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [Helm](https://helm.sh/docs/intro/install/)
+- A [GitHub](https://github.com/) account
 
 ### Quickstart - Run App Locally
 
 Verify that the sample application is able to run locally. In order to collect metrics, please continue to the [next section](#deploy-application-to-azure-kubernetes-service-to-collect-metrics) to deploy the app to AKS.
 
-1. git clone [this repo](https://github.com/Azure-Samples/dotnetapp-azure-prometheus/)
+1. Fork [this repo](https://github.com/Azure-Samples/dotnetapp-azure-prometheus/) to your github account and git clone
 2. cd `dotnetapp-azure-prometheus/Application`
 3. Run `docker-compose up` and go to <http://localhost:8080> to interact with the application.
 
 ### Deploy Application to Azure Kubernetes Service to Collect Metrics
 
 1. Open the `devops-starter-workflow.yml` and change the environment variables accordingly.
-2. Create the resource group in the Azure portal which was defined as part of the environment variables in the `devops-starter-workflow.yml`.
+2. Create the resource group in the Azure portal which was defined as part of the environment variables in the `.github\workflows\devops-starter-workflow.yml`.
 
     ```bash
-    az group create -n {MyResourceGroup}
+    az group create --name {MyResourceGroup} --location {MyLocation}
     ```
 
 3. Set up Azure login credentials by creating a service principal and adding the output of the command as a secret named `AZURE_CREDENTIALS` in the repository settings. For more details on generating the deployment credentials please see [this guide](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-github-actions#generate-deployment-credentials)
