@@ -6,8 +6,8 @@ on:
 
 env:
   RESOURCEGROUPNAME: "azuremetrics-dotnet" # Azure Resource group's name  
-  LOCATION: "East US" # e.g. # Azure Resource group's location  
-  IMAGENAME: "azuremetricsdotnet" # e.g. # Image name 
+  LOCATION: "East US"  # Azure Resource group's location  
+  IMAGENAME: "azuremetricsdotnet" # Image name 
   REGISTRYSKU: "Standard" # Registry sku
   REGISTRYNAME: "azuremetricsdotnet" # Container registry name
   REGISTRYLOCATION: "East US" # Container registry location

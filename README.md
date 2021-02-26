@@ -150,9 +150,18 @@ annotations:
     kubectl get services sampleapp
     ```
 
-2. Load the sampleapp endpoint and interact with the menu items (Home, About, Contact). Pre-aggregated metrics are configured and collected using:
+2. Load the sampleapp endpoint and interact with the menu items (Home, About, Contact). Pre-aggregated metrics are configured in the [RequestMiddleware.cs](Application/aspnet-core-dotnet-core/RequestMiddleware.cs). They are available with the following implementations:
 
     - **CustomMetrics**: Implementation of metrics using the AppInsights .NET Core SDK and `TelemetryClient.GetMetric`:
+
+      ```kql
+      # Example query that gets the metric for total requests
+
+      customMetrics
+      | where name == "getmetric_count_requests"
+      | extend customDimensions.path
+      | order by timestamp desc
+      ```
 
       ![custom-metrics](./assets/custom-metrics.png)
 
@@ -160,7 +169,18 @@ annotations:
 
       ![prometheus-metrics](./assets/prometheus-metrics.png)
 
-    - **InsightsMetrics**: Agent configuration for scraping Prometheus metrics with Azure Monitor:
+    Prometheus metrics are scraped using the following:
+
+    - **InsightsMetrics**: Agent configuration for scraping with Azure Monitor:
+
+      ```kql
+      # Example query that gets the prometheus metric for total requests
+
+      InsightMetrics
+      | where name == "prom_counter_request_total"
+      | where parse_json(Tags).method == "GET"
+      | extend path = parse_json(Tags).path
+      ```
 
       ![insights-metrics](./assets/insights-metrics.png)
 
