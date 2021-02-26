@@ -11,6 +11,8 @@ urlFragment: "dotnet-azure-prometheus"
 ---
 # Pre-aggregated Metrics - .NET Core app with Prometheus and Azure Monitor
 
+![workflow](https://github.com/Azure-Samples/dotnetapp-azure-prometheus/actions/workflows/devops-starter-workflow.yml/badge.svg)
+
 - [Pre-aggregated Metrics - .NET Core app with Prometheus and Azure Monitor](#pre-aggregated-metrics---net-core-app-with-prometheus-and-azure-monitor)
   - [Overview](#overview)
   - [Getting Started](#getting-started)
