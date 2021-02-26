@@ -5,24 +5,23 @@ on:
       - main
 
 env:
-  RESOURCEGROUPNAME: "" # e.g. "azuremetrics"
-  LOCATION: "" # e.g. "East US"
-  SUBSCRIPTIONID: ""
-  IMAGENAME: "" # e.g. "azuremetrics"
-  REGISTRYSKU: "Standard"
-  REGISTRYNAME: "" # e.g. "azuremetrics"
-  REGISTRYLOCATION: "" # e.g. "East US"
-  CLUSTERNAME: "" # e.g. "azuremetrics"
-  APPINSIGHTSLOCATION: "" # e.g. "East US"
-  CLUSTERLOCATION: "" # e.g. "East US"
-  AGENTCOUNT: "2"
-  AGENTVMSIZE: "Standard_DS2_v2"
-  KUBERNETESVERSION: 1.19.7
-  OMSLOCATION: "" # e.g. "East US"
-  OMSWORKSPACENAME: "" # e.g. "azuremetrics"
+  RESOURCEGROUPNAME: "azuremetrics-dotnet" # Azure Resource group's name  
+  LOCATION: "East US" # e.g. # Azure Resource group's location  
+  IMAGENAME: "azuremetricsdotnet" # e.g. # Image name 
+  REGISTRYSKU: "Standard" # Registry sku
+  REGISTRYNAME: "azuremetricsdotnet" # Container registry name
+  REGISTRYLOCATION: "East US" # Container registry location
+  CLUSTERNAME: "azuremetricsdotnet" # Cluster name
+  APPINSIGHTSLOCATION: "East US" # Application insights location
+  CLUSTERLOCATION: "East US" # Cluster location
+  AGENTCOUNT: "2" # Agent count
+  AGENTVMSIZE: "Standard_DS2_v2" # Agent VM Size
+  KUBERNETESVERSION: 1.19.7 # Kubernetes version
+  OMSLOCATION: "East US" # OMS location
+  OMSWORKSPACENAME: "azuremetricsdotnet" # Name of the OMS workspace
   HTTPSAPPLICATIONROUTINGENABLED: false
   KUBERNETESAPI: "apps/v1"
-  NAMESPACE: "" # e.g. "azuremetrics"
+  NAMESPACE: "azuremetricsdotnet" # Set namespace
 
 jobs:
   build:
@@ -31,18 +30,21 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # login to azure
+    # Authentication
+    # Set up the following secrets in your repository: 
+    # AZURE_CREDENTIALS
+    # AZURE_SUBSCRIPTION_ID 
     - name: Login to Azure
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }} #
 
     - name: Create AKS Cluster
       uses: azure/arm-deploy@v1
       id: deploy
       with:
         scope: resourcegroup
-        subscriptionId: ${{ env.SUBSCRIPTIONID }}
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.RESOURCEGROUPNAME }}
         template: ./ArmTemplates/aks-template.json
         parameters: clusterName="${{ env.CLUSTERNAME }}" appInsightsLocation="${{ env.APPINSIGHTSLOCATION }}" clusterLocation="${{ env.CLUSTERLOCATION }}" agentCount="${{ env.AGENTCOUNT }}" agentVMSize="${{ env.AGENTVMSIZE }}" kubernetesVersion="${{ env.KUBERNETESVERSION }}" omsLocation="${{ env.OMSLOCATION }}" omsWorkspaceName="${{ env.OMSWORKSPACENAME }}" httpApplicationRoutingEnabled="${{ env.HTTPSAPPLICATIONROUTINGENABLED }}"  dnsPrefix="${{ env.CLUSTERNAME }}"
