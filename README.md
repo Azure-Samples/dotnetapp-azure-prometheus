@@ -1,13 +1,13 @@
 ---
 page_type: sample
-languages:
-- csharp
-products:
-- azure
-- dotnet-core
+description: Sample .NET Core Web app that demonstrates different implementations for pre-aggregated metrics.
+languages: 
+  - csharp
 name: Pre-aggregated Metrics - .NET Core app with Prometheus and Azure Monitor
-description: "Sample .NET Core Web app that demonstrates different implementations for pre-aggregated metrics"
-urlFragment: "dotnet-azure-prometheus"
+products: 
+  - azure
+  - dotnet-core
+urlFragment: dotnet-azure-prometheus
 ---
 # Pre-aggregated Metrics - .NET Core app with Prometheus and Azure Monitor
 
