@@ -17,7 +17,7 @@ urlFragment: dotnet-azure-prometheus
   - [Overview](#overview)
   - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
-    - [Quickstart - Run App Locally](#quickstart---run-app-locally)
+    - [Quickstart - Running the App Locally](#quickstart---running-the-app-locally)
     - [Deploy Application to Azure Kubernetes Service to Collect Metrics](#deploy-application-to-azure-kubernetes-service-to-collect-metrics)
     - [Install the Prometheus Server](#install-the-prometheus-server)
   - [Prometheus scraping with Azure Monitor](#prometheus-scraping-with-azure-monitor)
@@ -46,7 +46,7 @@ Sample .NET Core Web app that demonstrates different implementations for pre-agg
 - [Helm](https://helm.sh/docs/intro/install/): Package manager for Kubernetes
 - [GitHub](https://github.com/) account
 
-### Quickstart - Run App Locally
+### Quickstart - Running the App Locally
 
 Verify that the sample application is able to run locally. In order to collect metrics, please continue to the [next section](#deploy-application-to-azure-kubernetes-service-to-collect-metrics) to deploy the app to AKS.
 
