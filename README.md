@@ -75,7 +75,9 @@ Verify the sample application is able to run locally. In order to collect metric
 
 2. Use the output of the last command as a secret named `AZURE_CREDENTIALS` in the repository settings. For more details on configuring the github repository secrets, please see [this guide](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-github-actions#configure-the-github-secrets)
 
-//TODO: IS THIS THE SUB ID FROM THE RESOURCE GROUP? ENV VAR OR REPO VAR? 3. Add a secret named `AZURE_SUBSCRIPTION_ID` for the subscription id in the repository settings (Settings -> Secrets -> Add New Secret).
+//TODO: IS THIS THE SUB ID FROM THE RESOURCE GROUP? ENV VAR OR REPO VAR?
+
+3. Add a secret named `AZURE_SUBSCRIPTION_ID` for the subscription id in the repository settings (Settings -> Secrets -> Add New Secret). You can copy/paste this value from the previous output.
 
 4. [Github Actions](https://docs.github.com/en/actions) will be used to automate the workflow and deploy all the necessary resources to Azure. Open the [.github\workflows\devops-starter-workflow.yml](.github\workflows\devops-starter-workflow.yml) and change the environment variables accordingly. Use the `RESOURCEGROUPNAME` and value that you created above.
 
