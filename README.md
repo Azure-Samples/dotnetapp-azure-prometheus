@@ -75,7 +75,7 @@ Verify the sample application is able to run locally. In order to collect metric
 
 2. Use the output of the last command as a secret named `AZURE_CREDENTIALS` in the repository settings (Settings -> Secrets -> New repository secret). Set this as a secret on the repository not on the environment. For more details on configuring the github repository secrets, please see [this guide](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-github-actions#configure-the-github-secrets)
 
-3. [Github Actions](https://docs.github.com/en/actions) will be used to automate the workflow and deploy all the necessary resources to Azure. Open the [.github\workflows\devops-starter-workflow.yml](.github\workflows\devops-starter-workflow.yml) and change the environment variables accordingly. Use the `RESOURCEGROUPNAME` and value that you created above. You will only need to change the RESOURCEGROUPNAME unless you would like specific names for the other variables nested under the env variable.
+3. [Github Actions](https://docs.github.com/en/actions) will be used to automate the workflow and deploy all the necessary resources to Azure. Open the [.github\workflows\devops-starter-workflow.yml](.github\workflows\devops-starter-workflow.yml) and change the environment variables accordingly. Use the `RESOURCEGROUPNAME` and value that you created above. Be sure to change at a minimum the RESOURCEGROUPNAME and the REGISTRYNAME. The REGISTRYNAME is a globally unique name and the deployment will fail if this value is not unique.
 
 4. Commit your changes. The commit will trigger the build and deploy jobs within the workflow and will provision all the resources to run the sample application.
 
