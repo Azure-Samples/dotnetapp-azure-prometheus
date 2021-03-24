@@ -9,7 +9,7 @@ env:
   LOCATION: "East US" # Azure Resource group's location
   IMAGENAME: "azuremetricsdotnet" # Image name
   REGISTRYSKU: "Standard" # Registry sku
-  REGISTRYNAME: "azuremetricsdotnet" # Container registry name
+  REGISTRYNAME: "prometheustest" # Container registry name
   REGISTRYLOCATION: "East US" # Container registry location
   CLUSTERNAME: "azuremetricsdotnet" # Cluster name
   APPINSIGHTSLOCATION: "East US" # Application insights location
@@ -33,7 +33,6 @@ jobs:
       # Authentication
       # Set up the following secrets in your repository:
       # AZURE_CREDENTIALS
-      # AZURE_SUBSCRIPTION_ID
       - name: Login to Azure
         uses: azure/login@v1
         with:

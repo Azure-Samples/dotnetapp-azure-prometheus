@@ -73,24 +73,20 @@ Verify the sample application is able to run locally. In order to collect metric
 
    **CAUTION:** There is a known bug with git bash. Git Bash will attempt to auto-translate resource IDs. If you encounter this issue, it can be fixed by appending MSYS_NO_PATHCONV=1 to the command. [See this link for further information.](https://github.com/fengzhou-msft/azure-cli/blob/ea149713de505fa0f8ae6bfa5d998e12fc8ff509/doc/use_cli_with_git_bash.md)
 
-2. Use the output of the last command as a secret named `AZURE_CREDENTIALS` in the repository settings. For more details on configuring the github repository secrets, please see [this guide](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-github-actions#configure-the-github-secrets)
+2. Use the output of the last command as a secret named `AZURE_CREDENTIALS` in the repository settings (Settings -> Secrets -> New repository secret). Set this as a secret on the repository not on the environment. For more details on configuring the github repository secrets, please see [this guide](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-github-actions#configure-the-github-secrets)
 
-//TODO: IS THIS THE SUB ID FROM THE RESOURCE GROUP? ENV VAR OR REPO VAR?
+3. [Github Actions](https://docs.github.com/en/actions) will be used to automate the workflow and deploy all the necessary resources to Azure. Open the [.github\workflows\devops-starter-workflow.yml](.github\workflows\devops-starter-workflow.yml) and change the environment variables accordingly. Use the `RESOURCEGROUPNAME` and value that you created above. You will only need to change the RESOURCEGROUPNAME unless you would like specific names for the other variables nested under the env variable.
 
-3. Add a secret named `AZURE_SUBSCRIPTION_ID` for the subscription id in the repository settings (Settings -> Secrets -> Add New Secret). You can copy/paste this value from the previous output.
-
-4. [Github Actions](https://docs.github.com/en/actions) will be used to automate the workflow and deploy all the necessary resources to Azure. Open the [.github\workflows\devops-starter-workflow.yml](.github\workflows\devops-starter-workflow.yml) and change the environment variables accordingly. Use the `RESOURCEGROUPNAME` and value that you created above.
-
-5. Commit your changes. The commit will trigger the build and deploy jobs within the workflow and will provision all the resources to run the sample application.
+4. Commit your changes. The commit will trigger the build and deploy jobs within the workflow and will provision all the resources to run the sample application.
 
 ### Install the Prometheus Server
 
 ```bash
 
 # Define variables
-RESOURCE_GROUP="<insert-resource-group-name-here>"
-CLUSTER_NAME="<insert-cluster-name-here>"
-NAMESPACE="<insert-application-namespace-name-here>"
+RESOURCE_GROUP="PrometheusTest"
+CLUSTER_NAME="azuremetricsdotnet"
+NAMESPACE="azuremetricsdotnet"
 
 # Connect to Cluster
 az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME
