@@ -1,14 +1,15 @@
 ---
 page_type: sample
 description: Sample .NET Core Web app that demonstrates different implementations for pre-aggregated metrics.
-languages: 
+languages:
   - csharp
 name: Pre-aggregated Metrics - .NET Core app with Prometheus and Azure Monitor
-products: 
+products:
   - azure
   - dotnet-core
 urlFragment: dotnet-azure-prometheus
 ---
+
 # Pre-aggregated Metrics - .NET Core app with Prometheus and Azure Monitor
 
 ![workflow](https://github.com/Azure-Samples/dotnetapp-azure-prometheus/actions/workflows/devops-starter-workflow.yml/badge.svg)
@@ -29,13 +30,7 @@ urlFragment: dotnet-azure-prometheus
 
 ## Overview
 
-Sample .NET Core Web app that demonstrates different implementations for pre-aggregated metrics using the following:
-
-- The Application Insights .NET Core SDK and method GetMetric to populate CustomMetrics
-- The prometheus-net .NET library to export Prometheus metrics
-- Agent configuration so that Prometheus metrics are scraped with Azure Monitor to populate Container logs InsightsMetrics
-- A Prometheus server that is installed on the cluster and configured to collect metrics from all pods
-- The RequestMiddleware.cs class in the sample application contains the metrics configuration for both Prometheus and GetMetric
+Sample .NET Core Web app that demonstrates different implementations for pre-aggregated metrics.
 
 ## Getting Started
 
@@ -44,11 +39,12 @@ Sample .NET Core Web app that demonstrates different implementations for pre-agg
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest): Create and manage Azure resources.
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/): Kubernetes command-line tool which allows you to run commands against Kubernetes clusters.
 - [Helm](https://helm.sh/docs/intro/install/): Package manager for Kubernetes
+- [Docker](https://docs.docker.com/desktop/)
 - [GitHub](https://github.com/) account
 
 ### Quickstart - Running the App Locally
 
-Verify that the sample application is able to run locally. In order to collect metrics, please continue to the [next section](#deploy-application-to-azure-kubernetes-service-to-collect-metrics) to deploy the app to AKS.
+Verify the sample application is able to run locally. In order to collect metrics, please continue to the [next section](#deploy-application-to-azure-kubernetes-service-to-collect-metrics) to deploy the app to AKS.
 
 1. Fork [this repo](https://github.com/Azure-Samples/dotnetapp-azure-prometheus/) to your github account and git clone
 2. cd `dotnetapp-azure-prometheus/Application`
@@ -58,23 +54,28 @@ Verify that the sample application is able to run locally. In order to collect m
 
 1. Create a resource group that will hold all the created resources and a service principal to manage and access those resources
 
-    ```bash
-    # Set your variables
-    RESOURCEGROUPNAME="MyResourceGroup"
-    LOCATION="MyLocation"
-    SUBSCRIPTIONID="MySubscriptionId"
-    SERVICEPRINCIPAL="MySPName"
+   ```bash
+   # Set your variables
+   RESOURCEGROUPNAME="MyResourceGroup"
+   LOCATION="MyLocation"
+   SUBSCRIPTIONID="MySubscriptionId"
+   SERVICEPRINCIPAL="MySPName"
 
-    # Create resource group
-    az group create --name $RESOURCEGROUPNAME --location $LOCATION
+   # login to azure if not already logged in from the cli
+   az login
 
-    # Create a service principal with Contributor role to the resource group
-    az ad sp create-for-rbac --name $SERVICEPRINCIPAL --role contributor --scopes /subscriptions/$SUBSCRIPTIONID/resourceGroups/$RESOURCEGROUPNAME --sdk-auth
-    ```
+   # Create resource group
+   az group create --name $RESOURCEGROUPNAME --location $LOCATION
 
-2. Use the output of the last command as a secret named `AZURE_CREDENTIALS` in the repository settings. For more details on generating the deployment credentials please see [this guide](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-github-actions#generate-deployment-credentials)
+   # Create a service principal with Contributor role to the resource group
+   az ad sp create-for-rbac --name $SERVICEPRINCIPAL --role contributor --scopes /subscriptions/$SUBSCRIPTIONID/resourceGroups/$RESOURCEGROUPNAME --sdk-auth
+   ```
 
-3. Add a secret named `AZURE_SUBSCRIPTION_ID` for the subscription id in the repository settings (Settings -> Secrets -> Add New Secret).
+   **CAUTION:** There is a known bug with git bash. Git Bash will attempt to auto-translate resource IDs. If you encounter this issue, it can be fixed by appending MSYS_NO_PATHCONV=1 to the command. [See this link for further information.](https://github.com/fengzhou-msft/azure-cli/blob/ea149713de505fa0f8ae6bfa5d998e12fc8ff509/doc/use_cli_with_git_bash.md)
+
+2. Use the output of the last command as a secret named `AZURE_CREDENTIALS` in the repository settings. For more details on configuring the github repository secrets, please see [this guide](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-github-actions#configure-the-github-secrets)
+
+//TODO: IS THIS THE SUB ID FROM THE RESOURCE GROUP? ENV VAR OR REPO VAR? 3. Add a secret named `AZURE_SUBSCRIPTION_ID` for the subscription id in the repository settings (Settings -> Secrets -> Add New Secret).
 
 4. [Github Actions](https://docs.github.com/en/actions) will be used to automate the workflow and deploy all the necessary resources to Azure. Open the [.github\workflows\devops-starter-workflow.yml](.github\workflows\devops-starter-workflow.yml) and change the environment variables accordingly. Use the `RESOURCEGROUPNAME` and value that you created above.
 
@@ -95,7 +96,7 @@ az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME
 # Set the default namespace to the application namespace
 kubectl config set-context --current --namespace=$NAMESPACE
 
-helm repo add stable https://charts.helm.sh/stable 
+helm repo add stable https://charts.helm.sh/stable
 
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 
@@ -105,10 +106,10 @@ helm repo update
 
 helm install my-prometheus prometheus-community/prometheus --set server.service.type=LoadBalancer --set rbac.create=false
 
-# Verify the installation by looking at your services 
+# Verify the installation by looking at your services
 kubectl get services
 
-# Connect your service with Prometheus 
+# Connect your service with Prometheus
 helm upgrade my-prometheus prometheus-community/prometheus --set server.service.type=LoadBalancer --set rbac.create=false -f Application/manifests/prometheus.values.yaml
 ```
 
@@ -117,13 +118,13 @@ helm upgrade my-prometheus prometheus-community/prometheus --set server.service.
 For Prometheus scraping with Azure Monitor, a Prometheus server is not required. The configMap `container-azm-ms-agentconfig.yaml`, enables scraping of Prometheus metrics from each pod in the cluster and has been configured according to the following:
 
 ```yml
-prometheus-data-collection-settings: |- 
+prometheus-data-collection-settings: |-
 # Custom Prometheus metrics data collection settings
-[prometheus_data_collection_settings.cluster] 
+[prometheus_data_collection_settings.cluster]
 interval = "1m"
 # Metrics for Prometheus scraping
 fieldpass=["prom_counter_request_total", "prom_histogram_request_duration", "prom_summary_memory", "prom_gauge_memory"]
-monitor_kubernetes_pods = true 
+monitor_kubernetes_pods = true
 ```
 
 Run the following command to apply this configMap configuration to the cluster:
@@ -138,62 +139,63 @@ To configure Prometheus to collect metrics from all pods the following annotatio
 
 ```yml
 annotations:
-  prometheus.io/scrape: 'true'
-  prometheus.io/port: '80'
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "80"
 ```
 
 ## Run the Application and Collect Metrics
 
 1. Get the IP addresses of the sampleapp and the prometheus-server:
 
-    ```bash
-    kubectl get services sampleapp
-    ```
+   ```bash
+   kubectl get services sampleapp
+   ```
 
 2. Load the sampleapp endpoint and interact with the menu items (Home, About, Contact). Pre-aggregated metrics are configured in the [RequestMiddleware.cs](Application/aspnet-core-dotnet-core/RequestMiddleware.cs). They are available with the following implementations:
 
-    - **CustomMetrics**: Implementation of metrics using the AppInsights .NET Core SDK and `TelemetryClient.GetMetric`:
+   - **CustomMetrics**: Implementation of metrics using the AppInsights .NET Core SDK and `TelemetryClient.GetMetric`:
 
-      ```kql
-      # Example query that gets the metric for total requests
+     ```kql
+     # Example query that gets the metric for total requests
 
-      customMetrics
-      | where name == "getmetric_count_requests"
-      | extend customDimensions.path
-      | order by timestamp desc
-      ```
+     customMetrics
+     | where name == "getmetric_count_requests"
+     | extend customDimensions.path
+     | order by timestamp desc
+     ```
 
-      ![custom-metrics](./assets/custom-metrics.png)
+     ![custom-metrics](./assets/custom-metrics.png)
 
-    - **Prometheus metrics**: Implementation of Prometheus metrics using the [prometheus-net](https://github.com/prometheus-net/prometheus-net) .NET library and the `/metrics` endpoint:
+   - **Prometheus metrics**: Implementation of Prometheus metrics using the [prometheus-net](https://github.com/prometheus-net/prometheus-net) .NET library and the `/metrics` endpoint:
 
-      ![prometheus-metrics](./assets/prometheus-metrics.png)
+     ![prometheus-metrics](./assets/prometheus-metrics.png)
 
-    Prometheus metrics are scraped using the following:
+   Prometheus metrics are scraped using the following:
 
-    - **InsightsMetrics**: Agent configuration for scraping with Azure Monitor:
+   - **InsightsMetrics**: Agent configuration for scraping with Azure Monitor:
 
-      ```kql
-      # Example query that gets the prometheus metric for total requests
+     ```kql
+     # Example query that gets the prometheus metric for total requests
 
-      InsightMetrics
-      | where name == "prom_counter_request_total"
-      | where parse_json(Tags).method == "GET"
-      | extend path = parse_json(Tags).path
-      ```
+     InsightMetrics
+     | where name == "prom_counter_request_total"
+     | where parse_json(Tags).method == "GET"
+     | extend path = parse_json(Tags).path
+     ```
 
-      ![insights-metrics](./assets/insights-metrics.png)
+     ![insights-metrics](./assets/insights-metrics.png)
 
-    - **Prometheus Server**:
-      - Get the prometheus server IP address:
+   - **Prometheus Server**:
 
-        ```bash
-        kubectl get services my-prometheus-server
-        ```
+     - Get the prometheus server IP address:
 
-      - Load the prometheus server endpoint. The cluster is configured to collect metrics from all pods:
+       ```bash
+       kubectl get services my-prometheus-server
+       ```
 
-        ![prometheus-server](./assets/prometheus-server.png)
+     - Load the prometheus server endpoint. The cluster is configured to collect metrics from all pods:
+
+       ![prometheus-server](./assets/prometheus-server.png)
 
 ## Optionally Install Grafana
 
@@ -202,12 +204,12 @@ Grafana can be optionally installed to visualize the web application data and me
 ```bash
 helm repo add grafana https://grafana.github.io/helm-charts
 
-helm repo update 
+helm repo update
 
 helm install my-grafana grafana/grafana  --set rbac.create=false --set service.type=LoadBalancer  --set persistence.enabled=true
 
 # Verify
-kubectl get services 
+kubectl get services
 
 ```
 
@@ -216,9 +218,9 @@ kubectl get services
 1. Get the IP address of the Grafana Dashboard
 2. Login with user `admin`. Get the password:
 
-    ```bash
-    kubectl get secret my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
-    ```
+   ```bash
+   kubectl get secret my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+   ```
 
 3. Follow the [setup guide](https://medium.com/faun/monitoring-with-prometheus-and-grafana-in-kubernetes-42727866562c) to get a starter dashboard for Kubernetes
 
@@ -228,3 +230,15 @@ kubectl get services
 - [Prometheus](https://prometheus.io/docs/prometheus/latest/)
 - [Metric types in Prometheus](https://prometheus.io/docs/concepts/metric_types)
 - [Prometheus scraping with Azure Monitor](https://docs.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-prometheus-integration#query-prometheus-metrics-data)
+
+## License:
+
+See [LICENSE](LICENSE).
+
+## Code of Conduct
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+## Contributing
+
+See [CONTRIBUTING](CONTRIBUTING.MD)
