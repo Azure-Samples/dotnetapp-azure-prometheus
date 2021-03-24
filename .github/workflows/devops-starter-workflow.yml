@@ -11,17 +11,17 @@ env:
   REGISTRYSKU: "Standard" # Registry sku
   REGISTRYNAME: "prometheustest" # Container registry name
   REGISTRYLOCATION: "East US" # Container registry location
-  CLUSTERNAME: "azuremetricsdotnet" # Cluster name
+  CLUSTERNAME: "prometheustest" # Cluster name
   APPINSIGHTSLOCATION: "East US" # Application insights location
   CLUSTERLOCATION: "East US" # Cluster location
   AGENTCOUNT: "2" # Agent count
   AGENTVMSIZE: "Standard_DS2_v2" # Agent VM Size
   KUBERNETESVERSION: 1.19.7 # Kubernetes version
   OMSLOCATION: "East US" # OMS location
-  OMSWORKSPACENAME: "azuremetricsdotnet" # Name of the OMS workspace
+  OMSWORKSPACENAME: "prometheustest" # Name of the OMS workspace
   HTTPSAPPLICATIONROUTINGENABLED: false
   KUBERNETESAPI: "apps/v1"
-  NAMESPACE: "azuremetricsdotnet" # Set namespace
+  NAMESPACE: "prometheustest" # Set namespace
 
 jobs:
   build:
