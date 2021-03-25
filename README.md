@@ -30,7 +30,16 @@ urlFragment: dotnet-azure-prometheus
 
 ## Overview
 
-Sample .NET Core Web app that demonstrates different implementations for pre-aggregated metrics.
+Sample .NET Core Web app that demonstrates different implementations for pre-aggregated metrics. Prometheus and Azure Monitor are two popular choices. However, they each offer differing capabilities. There are multiple paths to scraping metrics data from Kubernetes pods. This repository offers examples for 3 different options. It is possible to use just one or all three depending on the scenario.
+
+1. The Prometheus-Net .NET library is used to export [Prometheus-specific metrics](https://prometheus.io/docs/concepts/metric_types/).
+2. Agent configuration is used to scrape Prometheus metrics with Azure Monitor. These metrics then populate Container logs [InsightsMetrics](https://docs.microsoft.com/en-us/azure/azure-monitor/reference/tables/insightsmetrics).
+3. Application Insights .NET Core SDK is used to populate CustomMetrics using the [GetMetric method](https://docs.microsoft.com/en-us/azure/azure-monitor/app/get-metric).
+
+A couple of steps to take special note of:
+
+- A Prometheus server installed on the cluster is configured to collect metrics from all pods.
+- The RequestMiddleware.cs class in the sample application contains the metrics configuration for both Prometheus and GetMetric.
 
 ## Getting Started
 
@@ -56,8 +65,10 @@ Verify the sample application is able to run locally. In order to collect metric
 
    ```bash
    # Set your variables
+   #Resource group to hold the resources for this application
    RESOURCEGROUPNAME="MyResourceGroup"
    LOCATION="MyLocation"
+   #Azure subscription ID. Can be located in the Azure portal.
    SUBSCRIPTIONID="MySubscriptionId"
    SERVICEPRINCIPAL="MySPName"
 
@@ -75,7 +86,7 @@ Verify the sample application is able to run locally. In order to collect metric
 
 2. Use the output of the last command as a secret named `AZURE_CREDENTIALS` in the repository settings (Settings -> Secrets -> New repository secret). Set this as a secret on the repository not on the environment. For more details on configuring the github repository secrets, please see [this guide](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-github-actions#configure-the-github-secrets)
 
-3. [Github Actions](https://docs.github.com/en/actions) will be used to automate the workflow and deploy all the necessary resources to Azure. Open the [.github\workflows\devops-starter-workflow.yml](.github\workflows\devops-starter-workflow.yml) and change the environment variables accordingly. Use the `RESOURCEGROUPNAME` and value that you created above. Be sure to change at a minimum the RESOURCEGROUPNAME and the REGISTRYNAME. The REGISTRYNAME is a globally unique name and the deployment will fail if this value is not unique. [This resource can guide you with naming conventions.](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules)
+3. [Github Actions](https://docs.github.com/en/actions) will be used to automate the workflow and deploy all the necessary resources to Azure. Open the [.github\workflows\devops-starter-workflow.yml](.github\workflows\devops-starter-workflow.yml) and change the environment variables accordingly. Use the `RESOURCEGROUPNAME` and value that you created above. Be sure to change at a minimum the named variables, such as the `RESOURCEGROUPNAME` and the `REGISTRYNAME`. The `REGISTRYNAME` is a globally unique name and the deployment will fail if this value is not unique. [This resource can guide you with naming conventions.](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules)
 
 4. Commit your changes. The commit will trigger the build and deploy jobs within the workflow and will provision all the resources to run the sample application.
 
@@ -84,9 +95,9 @@ Verify the sample application is able to run locally. In order to collect metric
 ```bash
 
 # Define variables
-RESOURCE_GROUP="PrometheusTest"
-CLUSTER_NAME="prometheustest"
-NAMESPACE="prometheustest"
+RESOURCE_GROUP="MyResourcegroup"
+CLUSTER_NAME="azuremetricsdotnet"
+NAMESPACE="azuremetricsdotnet"
 
 # Connect to Cluster
 az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME
@@ -111,7 +122,7 @@ kubectl get services
 helm upgrade my-prometheus prometheus-community/prometheus --set server.service.type=LoadBalancer --set rbac.create=false -f Application/manifests/prometheus.values.yaml
 ```
 
-## Prometheus scraping with Azure Monitor
+## OPTION 1: Prometheus scraping with Azure Monitor
 
 For Prometheus scraping with Azure Monitor, a Prometheus server is not required. The configMap `container-azm-ms-agentconfig.yaml`, enables scraping of Prometheus metrics from each pod in the cluster and has been configured according to the following:
 
@@ -131,7 +142,7 @@ Run the following command to apply this configMap configuration to the cluster:
 kubectl apply -f Application/manifests/container-azm-ms-agentconfig.yaml
 ```
 
-## Pod Annotations for Scraping
+### Pod Annotations for Scraping
 
 To configure Prometheus to collect metrics from all pods the following annotations were added to the app [deployment.yaml](Application/charts/sampleapp/templates/deployment.yaml)
 
@@ -141,7 +152,7 @@ annotations:
   prometheus.io/port: "80"
 ```
 
-## Run the Application and Collect Metrics
+## OPTION 2 & 3: Run the Application and Collect Metrics
 
 1. Get the IP addresses of the sampleapp and the prometheus-server:
 
@@ -221,13 +232,6 @@ kubectl get services
    ```
 
 3. Follow the [setup guide](https://medium.com/faun/monitoring-with-prometheus-and-grafana-in-kubernetes-42727866562c) to get a starter dashboard for Kubernetes
-
-## Resources
-
-- [Custom metrics in .NET Core with GetMetric](https://docs.microsoft.com/en-us/azure/azure-monitor/app/get-metric)
-- [Prometheus](https://prometheus.io/docs/prometheus/latest/)
-- [Metric types in Prometheus](https://prometheus.io/docs/concepts/metric_types)
-- [Prometheus scraping with Azure Monitor](https://docs.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-prometheus-integration#query-prometheus-metrics-data)
 
 ## License:
 
