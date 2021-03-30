@@ -122,7 +122,17 @@ kubectl get services
 helm upgrade my-prometheus prometheus-community/prometheus --set server.service.type=LoadBalancer --set rbac.create=false -f Application/manifests/prometheus.values.yaml
 ```
 
-## Prometheus scraping with Azure Monitor
+### Pod Annotations for Scraping
+
+To configure Prometheus to collect metrics from all pods the following annotations were added to the app [deployment.yaml](Application/charts/sampleapp/templates/deployment.yaml)
+
+```yml
+annotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "80"
+```
+
+### Configure Prometheus scraping with Azure Monitor
 
 For Prometheus scraping with Azure Monitor, a Prometheus server is not required. The configMap `container-azm-ms-agentconfig.yaml`, enables scraping of Prometheus metrics from each pod in the cluster and has been configured according to the following:
 
@@ -140,16 +150,6 @@ Run the following command to apply this configMap configuration to the cluster:
 
 ```bash
 kubectl apply -f Application/manifests/container-azm-ms-agentconfig.yaml
-```
-
-### Pod Annotations for Scraping
-
-To configure Prometheus to collect metrics from all pods the following annotations were added to the app [deployment.yaml](Application/charts/sampleapp/templates/deployment.yaml)
-
-```yml
-annotations:
-  prometheus.io/scrape: "true"
-  prometheus.io/port: "80"
 ```
 
 ## Collect Metrics
@@ -219,7 +219,6 @@ helm install my-grafana grafana/grafana  --set rbac.create=false --set service.t
 
 # Verify
 kubectl get services
-
 ```
 
 ### Setup Configuration on Grafana
@@ -243,4 +242,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 
 ## Contributing
 
-See [CONTRIBUTING](CONTRIBUTING.MD)
+See [CONTRIBUTING](CONTRIBUTING.MD).
