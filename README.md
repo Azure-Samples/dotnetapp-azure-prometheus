@@ -30,7 +30,7 @@ urlFragment: dotnet-azure-prometheus
 
 ## Overview
 
-Sample .NET Core Web app that demonstrates different implementations for pre-aggregated metrics. Prometheus and Azure Monitor are two popular choices. However, they each offer differing capabilities. There are multiple paths to scraping metrics data from Kubernetes pods. This repository offers examples for 3 different options. It is possible to use just one or all three depending on the scenario.
+Sample .NET Core Web app that demonstrates different implementations for pre-aggregated metrics. Prometheus and Azure Monitor are two popular choices. However, they each offer differing capabilities. This repository offers examples for 3 different options. It is possible to use just one or all three depending on the scenario.
 
 1. The Prometheus-Net .NET library is used to export [Prometheus-specific metrics](https://prometheus.io/docs/concepts/metric_types/).
 2. Agent configuration is used to scrape Prometheus metrics with Azure Monitor. These metrics then populate Container logs [InsightsMetrics](https://docs.microsoft.com/en-us/azure/azure-monitor/reference/tables/insightsmetrics).
@@ -66,11 +66,11 @@ Verify the sample application is able to run locally. In order to collect metric
    ```bash
    # Set your variables
    #Resource group to hold the resources for this application
-   RESOURCEGROUPNAME="MyResourceGroup"
-   LOCATION="MyLocation"
+   RESOURCEGROUPNAME="insert-resource-group-name-here"
+   LOCATION="insert-location-here"
    #Azure subscription ID. Can be located in the Azure portal.
-   SUBSCRIPTIONID="MySubscriptionId"
-   SERVICEPRINCIPAL="MySPName"
+   SUBSCRIPTIONID="insert-subscription-id-here"
+   SERVICEPRINCIPAL="insert-service-principal-here"
 
    # login to azure if not already logged in from the cli
    az login
@@ -86,7 +86,7 @@ Verify the sample application is able to run locally. In order to collect metric
 
 2. Use the output of the last command as a secret named `AZURE_CREDENTIALS` in the repository settings (Settings -> Secrets -> New repository secret). Set this as a secret on the repository not on the environment. For more details on configuring the github repository secrets, please see [this guide](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-github-actions#configure-the-github-secrets)
 
-3. [Github Actions](https://docs.github.com/en/actions) will be used to automate the workflow and deploy all the necessary resources to Azure. Open the [.github\workflows\devops-starter-workflow.yml](.github\workflows\devops-starter-workflow.yml) and change the environment variables accordingly. Use the `RESOURCEGROUPNAME` and value that you created above. Be sure to change at a minimum the named variables, such as the `RESOURCEGROUPNAME` and the `REGISTRYNAME`. The `REGISTRYNAME` is a globally unique name and the deployment will fail if this value is not unique. [This resource can guide you with naming conventions.](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules)
+3. [Github Actions](https://docs.github.com/en/actions) will be used to automate the workflow and deploy all the necessary resources to Azure. Open the [.github\workflows\devops-starter-workflow.yml](.github\workflows\devops-starter-workflow.yml) and change the environment variables accordingly. Use the `RESOURCEGROUPNAME` and value that you created above. Be sure to change at a minimum the named variables, such as the `RESOURCEGROUPNAME` and the `REGISTRYNAME`. The `REGISTRYNAME` identifies the container registry, and it is a globally unique name. The deployment will fail if this value is not unique. [This resource can guide you with naming conventions.](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules)
 
 4. Commit your changes. The commit will trigger the build and deploy jobs within the workflow and will provision all the resources to run the sample application.
 
@@ -95,9 +95,9 @@ Verify the sample application is able to run locally. In order to collect metric
 ```bash
 
 # Define variables
-RESOURCE_GROUP="MyResourcegroup"
-CLUSTER_NAME="azuremetricsdotnet"
-NAMESPACE="azuremetricsdotnet"
+RESOURCE_GROUP="insert-resource-group-here"
+CLUSTER_NAME="insert-cluster-name-here"
+NAMESPACE="insert-namespace-here"
 
 # Connect to Cluster
 az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME
@@ -122,7 +122,7 @@ kubectl get services
 helm upgrade my-prometheus prometheus-community/prometheus --set server.service.type=LoadBalancer --set rbac.create=false -f Application/manifests/prometheus.values.yaml
 ```
 
-## OPTION 1: Prometheus scraping with Azure Monitor
+## Prometheus scraping with Azure Monitor
 
 For Prometheus scraping with Azure Monitor, a Prometheus server is not required. The configMap `container-azm-ms-agentconfig.yaml`, enables scraping of Prometheus metrics from each pod in the cluster and has been configured according to the following:
 
@@ -152,7 +152,7 @@ annotations:
   prometheus.io/port: "80"
 ```
 
-## OPTION 2 & 3: Run the Application and Collect Metrics
+## Collect Metrics
 
 1. Get the IP addresses of the sampleapp and the prometheus-server:
 
