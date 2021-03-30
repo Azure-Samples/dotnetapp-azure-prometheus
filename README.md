@@ -14,7 +14,21 @@ urlFragment: dotnet-azure-prometheus
 
 ![workflow](https://github.com/Azure-Samples/dotnetapp-azure-prometheus/actions/workflows/devops-starter-workflow.yml/badge.svg)
 
-[[_TOC_]] 
+- [Pre-aggregated Metrics - .NET Core app with Prometheus and Azure Monitor](#pre-aggregated-metrics---net-core-app-with-prometheus-and-azure-monitor)
+  - [Overview](#overview)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Quickstart - Running the App Locally](#quickstart---running-the-app-locally)
+    - [Deploy Application to Azure Kubernetes Service to Collect Metrics](#deploy-application-to-azure-kubernetes-service-to-collect-metrics)
+    - [Install the Prometheus Server](#install-the-prometheus-server)
+  - [Prometheus scraping with Azure Monitor](#prometheus-scraping-with-azure-monitor)
+  - [Pod Annotations for Scraping](#pod-annotations-for-scraping)
+  - [Run the Application and Collect Metrics](#run-the-application-and-collect-metrics)
+  - [Optionally Install Grafana](#optionally-install-grafana)
+    - [Setup Configuration on Grafana](#setup-configuration-on-grafana)
+  - [Licence](#licence)
+  - [Code of Conduct](#code-of-conduct)
+    - [Contributing](#contributing)
 
 ## Overview
 
@@ -220,7 +234,7 @@ kubectl get services
 
 3. Follow the [setup guide](https://medium.com/faun/monitoring-with-prometheus-and-grafana-in-kubernetes-42727866562c) to get a starter dashboard for Kubernetes
 
-## License:
+## License
 
 See [LICENSE](LICENSE).
 
