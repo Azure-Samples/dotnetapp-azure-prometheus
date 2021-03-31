@@ -19,14 +19,16 @@ urlFragment: dotnet-azure-prometheus
   - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
     - [Quickstart - Running the App Locally](#quickstart---running-the-app-locally)
-    - [Deploy Application to Azure Kubernetes Service to Collect Metrics](#deploy-application-to-azure-kubernetes-service-to-collect-metrics)
-    - [Install the Prometheus Server](#install-the-prometheus-server)
-  - [Prometheus scraping with Azure Monitor](#prometheus-scraping-with-azure-monitor)
-  - [Pod Annotations for Scraping](#pod-annotations-for-scraping)
-  - [Run the Application and Collect Metrics](#run-the-application-and-collect-metrics)
+    - [Deploy Application to Azure Kubernetes Service to Collect Metrics](#deploy-application-to-azure-kubernetes-service)
+    - [Install Prometheus](#install-prometheus)
+    - [Pod Annotations for Scraping](#pod-annotations-for-scraping)
+    - [Configure Prometheus scraping with Azure Monitor](#configure-prometheus-scraping-with-azure-monitor)
+  - [Collect Metrics](#collect-metrics)
   - [Optionally Install Grafana](#optionally-install-grafana)
     - [Setup Configuration on Grafana](#setup-configuration-on-grafana)
-  - [Resources](#resources)
+  - [License](#license)
+  - [Code of Conduct](#code-of-conduct)
+  - [Contributing](#contributing)
 
 ## Overview
 
@@ -59,7 +61,7 @@ Verify the sample application is able to run locally. In order to collect metric
 2. cd `dotnetapp-azure-prometheus/Application`
 3. Run `docker-compose up` and go to <http://localhost:8080> to interact with the application.
 
-### Deploy Application to Azure Kubernetes Service to Collect Metrics
+### Deploy Application to Azure Kubernetes Service
 
 1. Create a resource group that will hold all the created resources and a service principal to manage and access those resources
 
@@ -90,7 +92,7 @@ Verify the sample application is able to run locally. In order to collect metric
 
 4. Commit your changes. The commit will trigger the build and deploy jobs within the workflow and will provision all the resources to run the sample application.
 
-### Install the Prometheus Server
+### Install Prometheus
 
 ```bash
 
@@ -232,7 +234,7 @@ kubectl get services
 
 3. Follow the [setup guide](https://medium.com/faun/monitoring-with-prometheus-and-grafana-in-kubernetes-42727866562c) to get a starter dashboard for Kubernetes
 
-## License:
+## License
 
 See [LICENSE](LICENSE).
 
