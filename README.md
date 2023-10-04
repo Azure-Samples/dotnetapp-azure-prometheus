@@ -6,7 +6,7 @@ languages:
 name: Pre-aggregated Metrics - .NET Core app with Prometheus and Azure Monitor
 products:
   - azure
-  - dotnet-core
+  - dotnet
 urlFragment: dotnet-azure-prometheus
 ---
 
