@@ -52,8 +52,8 @@ jobs:
         id: createACR
         run: |
           az acr create -n ${{ env.REGISTRYNAME }} -g ${{ env.RESOURCEGROUPNAME }} --location "${{env.REGISTRYLOCATION}}" --sku ${{env.REGISTRYSKU}} --admin-enabled
-          echo "::set-output name=acr_username::`az acr credential show -n ${{ env.REGISTRYNAME }} --query username`"
-          echo "::set-output name=acr_password::`az acr credential show -n ${{ env.REGISTRYNAME }} --query passwords[0].value`"
+          echo "acr_username=`az acr credential show -n ${{ env.REGISTRYNAME }} --query username`" >> "$GITHUB_OUTPUT"
+          echo "acr_password=`az acr credential show -n ${{ env.REGISTRYNAME }} --query passwords[0].value`" >> "$GITHUB_OUTPUT"
           echo "::add-mask::`az acr credential show -n ${{ env.REGISTRYNAME }} --query passwords[0].value`"
 
       - name: Build and push image to ACR
@@ -94,8 +94,8 @@ jobs:
       - name: Get ACR credentials
         id: getACRCred
         run: |
-          echo "::set-output name=acr_username::`az acr credential show -n ${{ env.REGISTRYNAME }} --query username | xargs`"
-          echo "::set-output name=acr_password::`az acr credential show -n ${{ env.REGISTRYNAME }} --query passwords[0].value | xargs`"
+          echo "acr_username=`az acr credential show -n ${{ env.REGISTRYNAME }} --query username | xargs`" >> "$GITHUB_OUTPUT"
+          echo "acr_password=`az acr credential show -n ${{ env.REGISTRYNAME }} --query passwords[0].value | xargs`" >> "$GITHUB_OUTPUT"
           echo "::add-mask::`az acr credential show -n ${{ env.REGISTRYNAME }} --query passwords[0].value | xargs`"
 
       - uses: azure/k8s-create-secret@v1
@@ -109,7 +109,7 @@ jobs:
       - name: Fetch Application insights key
         id: GetAppInsightsKey
         run: |
-          echo "::set-output name=AIKey::`az resource show -g ${{ env.RESOURCEGROUPNAME }} -n ${{ env.CLUSTERNAME }} --resource-type "Microsoft.Insights/components" --query "properties.InstrumentationKey" -o tsv`"
+          echo "AIKey=`az resource show -g ${{ env.RESOURCEGROUPNAME }} -n ${{ env.CLUSTERNAME }} --resource-type "Microsoft.Insights/components" --query "properties.InstrumentationKey" -o tsv`" >> "$GITHUB_OUTPUT"
           echo "::add-mask::`az resource show -g ${{ env.RESOURCEGROUPNAME }} -n ${{ env.CLUSTERNAME }} --resource-type "Microsoft.Insights/components" --query "properties.InstrumentationKey" -o tsv`"
 
       - uses: azure/k8s-bake@v1
