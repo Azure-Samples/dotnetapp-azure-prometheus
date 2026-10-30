@@ -28,18 +28,18 @@ jobs:
     name: Build and push image to container registry
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
 
       # Authentication
       # Set up the following secret in your repository:
       # AZURE_CREDENTIALS
       - name: Login to Azure
-        uses: azure/login@v1
+        uses: azure/login@cb79c773a3cfa27f31f25eb3f677781210c9ce3d # v1.6.1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Create AKS Cluster
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@65ae74fb7aec7c680c88ef456811f353adae4d06 # v1.0.9
         id: deploy
         with:
           scope: resourcegroup
@@ -69,11 +69,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
 
       # login to azure
       - name: Login to Azure
-        uses: azure/login@v1
+        uses: azure/login@cb79c773a3cfa27f31f25eb3f677781210c9ce3d # v1.6.1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -98,7 +98,7 @@ jobs:
           echo "::set-output name=acr_password::`az acr credential show -n ${{ env.REGISTRYNAME }} --query passwords[0].value | xargs`"
           echo "::add-mask::`az acr credential show -n ${{ env.REGISTRYNAME }} --query passwords[0].value | xargs`"
 
-      - uses: azure/k8s-create-secret@v1
+      - uses: azure/k8s-create-secret@1d0b19a806c9fd5ea508de4540d8b3617f9bfa00 # v1
         with:
           namespace: ${{ env.NAMESPACE }}
           container-registry-url: ${{ env.REGISTRYNAME }}.azurecr.io
@@ -112,7 +112,7 @@ jobs:
           echo "::set-output name=AIKey::`az resource show -g ${{ env.RESOURCEGROUPNAME }} -n ${{ env.CLUSTERNAME }} --resource-type "Microsoft.Insights/components" --query "properties.InstrumentationKey" -o tsv`"
           echo "::add-mask::`az resource show -g ${{ env.RESOURCEGROUPNAME }} -n ${{ env.CLUSTERNAME }} --resource-type "Microsoft.Insights/components" --query "properties.InstrumentationKey" -o tsv`"
 
-      - uses: azure/k8s-bake@v1
+      - uses: azure/k8s-bake@773b6144a3732e3bf4c78b146a0bb9617b2e016b # v1
         id: bakeManifests
         with:
           renderEngine: "helm"
@@ -128,7 +128,7 @@ jobs:
           helm-version: "latest"
           silent: "true"
 
-      - uses: azure/k8s-deploy@v1
+      - uses: azure/k8s-deploy@2f25f49dce3a648e1451f23f89fd73a2e1085123 # v1.1
         with:
           namespace: ${{ env.NAMESPACE }}
           manifests: ${{ steps.bakeManifests.outputs.manifestsBundle }}
